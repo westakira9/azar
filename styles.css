@@ -130,21 +130,16 @@ input, textarea {
 }
 input:focus, textarea:focus { border-color: var(--rose); }
 
-.primary-btn, .ghost-btn {
+.primary-btn {
   width: 100%; padding: 15px; border-radius: 14px; border: none; cursor: pointer;
   font-family: inherit; font-size: 1rem; font-weight: 600; margin-top: 16px;
   transition: transform .15s, filter .2s;
+  background: linear-gradient(135deg, var(--rose), var(--wine)); color: #fff;
 }
-.primary-btn { background: linear-gradient(135deg, var(--rose), var(--wine)); color: #fff; }
 .primary-btn:active { transform: scale(.98); }
 .primary-btn:disabled { filter: grayscale(.6) brightness(.7); cursor: default; }
-.ghost-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); margin-top: 8px; }
 
 .add-status, .add-status:empty { min-height: 20px; font-size: .85rem; margin-top: 10px; color: var(--rose-soft); }
-
-.settings { margin-top: 26px; border-top: 1px solid var(--border); padding-top: 14px; }
-.settings summary { color: var(--muted); font-size: .85rem; cursor: pointer; }
-.hint { color: var(--muted); font-size: .78rem; margin: 10px 0; line-height: 1.5; }
 
 .list-head { margin: 28px 0 12px; }
 .phrase-list { list-style: none; display: flex; flex-direction: column; gap: 10px; padding-bottom: 40px; }
