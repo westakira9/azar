@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
   <!-- Pantalla inicial -->
@@ -69,14 +69,6 @@
         <button id="add-btn" class="primary-btn">Agregar frase</button>
         <p class="add-status" id="add-status"></p>
 
-        <details class="settings">
-          <summary>Configuración de publicación</summary>
-          <p class="hint">Para que tu amigo vea las frases que agregas, pega un token de GitHub (se guarda solo en este dispositivo).</p>
-          <input type="password" id="gh-token" placeholder="GitHub token (ghp_… o github_pat_…)" autocomplete="off" />
-          <button id="save-token" class="ghost-btn">Guardar token</button>
-          <p class="hint" id="token-status"></p>
-        </details>
-
         <div class="list-head">
           <h3>Frases actuales (<span id="count-list">0</span>)</h3>
         </div>
@@ -87,7 +79,7 @@
 
   <div id="toast" class="toast"></div>
 
-  <script src="config.js?v=3"></script>
-  <script src="app.js?v=3"></script>
+  <script src="config.js?v=4"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

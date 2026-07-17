@@ -1,0 +1,10 @@
+name = "azar-api"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+workers_dev = true
+
+# El id del namespace KV se completa tras crearlo con:
+#   npx wrangler kv namespace create AZAR
+[[kv_namespaces]]
+binding = "AZAR"
+id = "f7922a70ed6b4aaf93b756b96ee0c8ab"

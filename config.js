@@ -1,8 +1,5 @@
 // Configuración de "azar"
-// Los datos del repo se usan para publicar frases nuevas en línea vía GitHub.
+// api: backend en Cloudflare que guarda las frases (leer/agregar sin clave).
 window.AZAR_CONFIG = {
-  owner: "westakira9",
-  repo: "azar",
-  branch: "main",
-  file: "phrases.json"
+  api: "https://azar-api.westakira9.workers.dev"
 };
