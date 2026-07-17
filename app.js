@@ -2,15 +2,13 @@
   "use strict";
   var CFG = window.AZAR_CONFIG || {};
   var phrases = [];
-  var tapMode = "ambas";
-  var lastIndex = -1;
+  var lastId = null;
 
   // ---------- utilidades ----------
   function $(sel, ctx) { return (ctx || document).querySelector(sel); }
   function $all(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
 
   function b64Encode(str) { return btoa(unescape(encodeURIComponent(str))); }
-  function b64Decode(str) { return decodeURIComponent(escape(atob(str.replace(/\n/g, "")))); }
 
   var toastTimer;
   function toast(msg) {
@@ -26,6 +24,7 @@
     $all(".screen").forEach(function (s) { s.classList.remove("active"); });
     $("#" + id).classList.add("active");
     if (id === "tap") resetTap();
+    if (id === "add") { renderList(); refreshTokenStatus(); }
   }
 
   $all("[data-go]").forEach(function (b) {
@@ -44,10 +43,7 @@
         updateCounts();
         return phrases;
       })
-      .catch(function () {
-        phrases = [];
-        updateCounts();
-      });
+      .catch(function () { phrases = []; updateCounts(); });
   }
 
   function updateCounts() {
@@ -65,30 +61,20 @@
 
   function pickPhrase() {
     if (!phrases.length) { toast("Aún no hay frases"); return; }
-    var pool = phrases;
-    if (tapMode === "corta") pool = phrases.filter(function (p) { return p.corta; });
-    else if (tapMode === "larga") pool = phrases.filter(function (p) { return p.larga; });
-    if (!pool.length) pool = phrases;
-
-    var idx = Math.floor(Math.random() * pool.length);
-    if (pool.length > 1) {
+    var idx = Math.floor(Math.random() * phrases.length);
+    if (phrases.length > 1) {
       var guard = 0;
-      while (pool[idx].id === lastIndex && guard < 8) { idx = Math.floor(Math.random() * pool.length); guard++; }
+      while (phrases[idx].id === lastId && guard < 8) { idx = Math.floor(Math.random() * phrases.length); guard++; }
     }
-    lastIndex = pool[idx].id;
-    render(pool[idx]);
+    lastId = phrases[idx].id;
+    render(phrases[idx]);
   }
 
   function render(p) {
     $("#tap-hint").style.display = "none";
     var wrap = $("#phrase-wrap");
-    var corta = $("#phrase-corta");
-    var larga = $("#phrase-larga");
-
-    if (tapMode === "corta") { corta.textContent = p.corta || p.larga || ""; larga.textContent = ""; }
-    else if (tapMode === "larga") { corta.textContent = ""; larga.textContent = p.larga || p.corta || ""; }
-    else { corta.textContent = p.corta || ""; larga.textContent = p.larga || ""; }
-
+    $("#phrase-corta").textContent = p.accion || "";
+    $("#phrase-larga").textContent = p.consiste || "";
     wrap.classList.remove("show");
     void wrap.offsetWidth; // reinicia animación
     wrap.classList.add("show");
@@ -97,44 +83,12 @@
 
   $("#tap-area").addEventListener("click", pickPhrase);
 
-  $all("#tap-filter button").forEach(function (b) {
-    b.addEventListener("click", function () {
-      $all("#tap-filter button").forEach(function (x) { x.classList.remove("active"); });
-      b.classList.add("active");
-      tapMode = b.getAttribute("data-mode");
-      resetTap();
-    });
-  });
-
-  // ---------- panel agregar ----------
-  var GATE_OK = "azar_gate_ok";
-
-  function openForm() {
-    $("#gate").classList.add("hidden");
-    $("#add-form").classList.remove("hidden");
-    renderList();
-    refreshTokenStatus();
-  }
-
-  if (sessionStorage.getItem(GATE_OK) === "1") openForm();
-
-  $("#gate-btn").addEventListener("click", function () {
-    var val = $("#gate-pass").value;
-    if (val === CFG.gateKey) {
-      sessionStorage.setItem(GATE_OK, "1");
-      $("#gate-err").textContent = "";
-      openForm();
-    } else {
-      $("#gate-err").textContent = "Clave incorrecta";
-    }
-  });
-  $("#gate-pass").addEventListener("keydown", function (e) { if (e.key === "Enter") $("#gate-btn").click(); });
-
-  // token
+  // ---------- token de publicación ----------
   var TOKEN_KEY = "azar_gh_token";
   function getToken() { return localStorage.getItem(TOKEN_KEY) || ""; }
   function refreshTokenStatus() {
     var el = $("#token-status");
+    if (!el) return;
     if (getToken()) { el.textContent = "Token guardado ✓ — las frases nuevas se publican en línea."; $("#gh-token").value = ""; }
     else { el.textContent = "Sin token: no podrás publicar todavía."; }
   }
@@ -146,31 +100,31 @@
     toast("Token guardado");
   });
 
+  // ---------- lista ----------
   function renderList() {
     var ul = $("#phrase-list");
     ul.innerHTML = "";
     phrases.slice().reverse().forEach(function (p) {
       var li = document.createElement("li");
       var b = document.createElement("b");
-      b.textContent = p.corta || "(sin título)";
+      b.textContent = p.accion || "(sin acción)";
       var s = document.createElement("span");
-      s.textContent = p.larga || "";
+      s.textContent = p.consiste || "";
       li.appendChild(b);
-      if (p.larga) li.appendChild(s);
+      if (p.consiste) li.appendChild(s);
       ul.appendChild(li);
     });
     updateCounts();
   }
 
-  // publicar en GitHub
+  // ---------- publicar en GitHub ----------
   function apiUrl() {
     return "https://api.github.com/repos/" + CFG.owner + "/" + CFG.repo + "/contents/" + CFG.file;
   }
 
   function publish(newArray, msg) {
-    var token = getToken();
     var headers = {
-      "Authorization": "Bearer " + token,
+      "Authorization": "Bearer " + getToken(),
       "Accept": "application/vnd.github+json"
     };
     return fetch(apiUrl() + "?ref=" + CFG.branch, { headers: headers, cache: "no-store" })
@@ -185,11 +139,7 @@
           sha: file.sha,
           branch: CFG.branch
         };
-        return fetch(apiUrl(), {
-          method: "PUT",
-          headers: headers,
-          body: JSON.stringify(body)
-        });
+        return fetch(apiUrl(), { method: "PUT", headers: headers, body: JSON.stringify(body) });
       })
       .then(function (r) {
         if (!r.ok) return r.json().then(function (e) { throw new Error(e.message || ("Error " + r.status)); });
@@ -200,30 +150,28 @@
   function newId() { return "p" + Date.now().toString(36); }
 
   $("#add-btn").addEventListener("click", function () {
-    var corta = $("#in-corta").value.trim();
-    var larga = $("#in-larga").value.trim();
+    var accion = $("#in-accion").value.trim();
+    var consiste = $("#in-consiste").value.trim();
     var status = $("#add-status");
 
-    if (!corta && !larga) { status.textContent = "Escribe al menos una frase corta o larga."; return; }
+    if (!accion && !consiste) { status.textContent = "Escribe una acción o en qué consiste."; return; }
     if (!getToken()) { status.textContent = "Configura tu token de GitHub para publicar (ver Configuración)."; return; }
 
     var btn = this;
     btn.disabled = true;
     status.textContent = "Publicando…";
 
-    var next = phrases.concat([{ id: newId(), corta: corta, larga: larga }]);
-    publish(next, "Agregar frase: " + (corta || larga).slice(0, 40))
+    var next = phrases.concat([{ id: newId(), accion: accion, consiste: consiste }]);
+    publish(next, "Agregar frase: " + (accion || consiste).slice(0, 40))
       .then(function () {
         phrases = next;
-        $("#in-corta").value = "";
-        $("#in-larga").value = "";
+        $("#in-accion").value = "";
+        $("#in-consiste").value = "";
         renderList();
         status.textContent = "";
         toast("Publicado — visible en ~1 min");
       })
-      .catch(function (err) {
-        status.textContent = "Error: " + err.message;
-      })
+      .catch(function (err) { status.textContent = "Error: " + err.message; })
       .then(function () { btn.disabled = false; });
   });
 

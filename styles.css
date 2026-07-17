@@ -86,17 +86,6 @@ body {
 
 /* ---------- TAP ---------- */
 .tap-screen { padding-top: calc(env(safe-area-inset-top) + 14px); }
-.tap-filter {
-  display: flex; gap: 8px; justify-content: center; margin: 6px auto 0;
-  background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 4px;
-}
-.tap-filter button {
-  border: none; background: transparent; color: var(--muted);
-  padding: 8px 16px; border-radius: 999px; font-size: .85rem; font-weight: 500; cursor: pointer;
-  transition: all .2s;
-}
-.tap-filter button.active { background: var(--rose); color: #fff; }
-
 .tap-area {
   flex: 1; display: flex; align-items: center; justify-content: center;
   text-align: center; cursor: pointer; position: relative; user-select: none;
@@ -131,10 +120,6 @@ body {
 .add-inner { width: 100%; max-width: 520px; margin: 0 auto; }
 .add-inner h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 600; margin-bottom: 22px; }
 .add-inner h3 { font-size: 1rem; font-weight: 600; color: var(--rose-soft); }
-
-.gate { display: flex; flex-direction: column; gap: 12px; }
-.gate-text { color: var(--muted); font-size: .95rem; }
-.gate-err { color: var(--rose); font-size: .85rem; min-height: 18px; }
 
 label { display: block; font-size: .82rem; color: var(--muted); margin: 14px 0 6px; letter-spacing: .04em; }
 input, textarea {

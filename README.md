@@ -2,8 +2,8 @@
 
 Sitio íntimo para parejas (+18). Dos modos:
 
-- **Tocar la pantalla**: toca y aparece una frase al azar (cortas, largas o sorpresa).
-- **Dejar una frase**: panel privado del dueño para agregar frases nuevas que se publican en línea.
+- **Tocar la pantalla**: toca y aparece una frase al azar.
+- **Dejar frase**: formulario con **Acción** y **En qué consiste** para agregar frases que se publican en línea.
 
 Es un sitio estático (HTML/CSS/JS) publicado en **GitHub Pages**.
 
@@ -13,14 +13,13 @@ Es un sitio estático (HTML/CSS/JS) publicado en **GitHub Pages**.
 
 Compártele el enlace a quien quieras. Cualquiera puede ver y usar el modo "Tocar la pantalla".
 
-## Agregar frases (solo el dueño)
+## Agregar frases
 
-1. Abre el sitio y entra a **Dejar una frase**.
-2. Ingresa la clave (definida en `config.js` → `gateKey`, por defecto `abreme`).
-3. La primera vez, abre **Configuración de publicación** y pega un **token de GitHub**
+1. Abre el sitio y entra a **Dejar frase**.
+2. La primera vez, abre **Configuración de publicación** y pega un **token de GitHub**
    con permiso de escritura (`Contents: Read and write`) sobre este repositorio.
    El token se guarda solo en tu dispositivo (localStorage), nunca en el sitio.
-4. Escribe la frase corta y/o larga y pulsa **Agregar frase**.
+3. Escribe la **Acción** y **En qué consiste** y pulsa **Agregar frase**.
    Se guarda en `phrases.json` del repo; en ~1 minuto GitHub Pages la publica y tu amigo la verá.
 
 ### Crear el token de GitHub

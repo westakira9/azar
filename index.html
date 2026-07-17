@@ -37,11 +37,6 @@
   <!-- Modo tocar -->
   <section id="tap" class="screen tap-screen">
     <button class="back" data-back aria-label="Volver">←</button>
-    <div class="tap-filter" id="tap-filter">
-      <button data-mode="ambas" class="active">Sorpréndeme</button>
-      <button data-mode="corta">Cortas</button>
-      <button data-mode="larga">Largas</button>
-    </div>
 
     <div class="tap-area" id="tap-area">
       <div class="tap-hint" id="tap-hint">
@@ -60,23 +55,15 @@
   <section id="add" class="screen add-screen">
     <button class="back" data-back aria-label="Volver">←</button>
     <div class="add-inner">
-      <h2>Dejar una frase</h2>
-
-      <!-- Gate de acceso -->
-      <div id="gate" class="gate">
-        <p class="gate-text">Solo el dueño puede agregar frases.</p>
-        <input type="password" id="gate-pass" placeholder="Clave" autocomplete="off" />
-        <button id="gate-btn" class="primary-btn">Entrar</button>
-        <p class="gate-err" id="gate-err"></p>
-      </div>
+      <h2>Dejar frase</h2>
 
       <!-- Formulario -->
-      <div id="add-form" class="add-form hidden">
-        <label>Frase corta (título breve)</label>
-        <input type="text" id="in-corta" placeholder="Ej: Cuello y mordidas" maxlength="80" />
+      <div id="add-form" class="add-form">
+        <label>Acción</label>
+        <input type="text" id="in-accion" placeholder="Ej: Cuello y mordidas" maxlength="80" />
 
-        <label>Frase larga (descripción)</label>
-        <textarea id="in-larga" rows="4" placeholder="Describe con detalle..." maxlength="600"></textarea>
+        <label>En qué consiste</label>
+        <textarea id="in-consiste" rows="4" placeholder="Describe con detalle..." maxlength="600"></textarea>
 
         <button id="add-btn" class="primary-btn">Agregar frase</button>
         <p class="add-status" id="add-status"></p>
