@@ -3,33 +3,35 @@
 Sitio íntimo para parejas (+18). Dos modos:
 
 - **Tocar la pantalla**: toca y aparece una frase al azar.
-- **Dejar frase**: formulario con **Acción** y **En qué consiste** para agregar frases que se publican en línea.
-
-Es un sitio estático (HTML/CSS/JS) publicado en **GitHub Pages**.
+- **Dejar frase**: formulario con **Acción** y **En qué consiste** para agregar frases.
 
 ## En línea
 
-`https://westakira9.github.io/azar/`
+- Sitio (GitHub Pages): `https://westakira9.github.io/azar/`
+- Backend (Cloudflare Worker): `https://azar-api.westakira9.workers.dev`
 
-Compártele el enlace a quien quieras. Cualquiera puede ver y usar el modo "Tocar la pantalla".
+Comparte el enlace del sitio a quien quieras. **Cualquiera, en cualquier país, puede
+ver y agregar frases sin clave ni token.** Las frases se guardan en el backend
+(Cloudflare KV) y aparecen para los demás en hasta ~1 minuto (caché de lectura).
 
-## Agregar frases
+## Arquitectura
 
-1. Abre el sitio y entra a **Dejar frase**.
-2. La primera vez, abre **Configuración de publicación** y pega un **token de GitHub**
-   con permiso de escritura (`Contents: Read and write`) sobre este repositorio.
-   El token se guarda solo en tu dispositivo (localStorage), nunca en el sitio.
-3. Escribe la **Acción** y **En qué consiste** y pulsa **Agregar frase**.
-   Se guarda en `phrases.json` del repo; en ~1 minuto GitHub Pages la publica y tu amigo la verá.
+- **Frontend estático** (`index.html`, `styles.css`, `app.js`, `config.js`) en GitHub Pages.
+- **Backend** en `api/` (Cloudflare Worker + KV) guarda las frases:
+  - `GET /` → devuelve la lista de frases.
+  - `POST /` con `{ "accion": "...", "consiste": "..." }` → agrega una frase.
 
-### Crear el token de GitHub
+### Desplegar / actualizar el backend
 
-GitHub → Settings → Developer settings → **Fine-grained tokens** → Generate new token:
-- Repository access: solo `azar`.
-- Permissions → Repository permissions → **Contents: Read and write**.
+```
+cd api
+npx wrangler deploy
+```
 
-## Archivos
+El almacenamiento es un namespace KV llamado `AZAR`. Para vaciarlo:
 
-- `index.html`, `styles.css`, `app.js` — la app.
-- `config.js` — clave del panel y datos del repo.
-- `phrases.json` — las frases (fuente de verdad, en línea).
+```
+npx wrangler kv key put phrases "[]" --namespace-id <ID> --remote
+```
+
+`config.js` apunta el sitio al backend mediante `api`.
